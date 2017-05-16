@@ -1,0 +1,8 @@
+test:
+  build: .
+  volumes:
+    - ./fixtures/app:/home/app
+    - ./fixtures/cache:/home/cache
+    - ./fixtures/env:/home/env
+    - ./:/home/buildpack
+

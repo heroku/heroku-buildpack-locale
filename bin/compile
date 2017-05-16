@@ -1,0 +1,63 @@
+#!/bin/bash -e
+source /dev/stdin <<< "$(curl -s --retry 3 https://lang-common.s3.amazonaws.com/buildpack-stdlib/latest/stdlib.sh)"
+
+BP_DIR=$(cd $(dirname $0)/..; pwd)
+BUILD_DIR=$1
+CACHE_DIR=$2
+ENV_DIR=$3
+
+PROFILE_PATH="$BUILD_DIR/.profile.d/locale.sh"
+EXPORT_PATH="$BP_DIR/export"
+
+mkdir -p $BUILD_DIR/.profile.d
+export_env $ENV_DIR "." ""
+
+if [ -z $LANG ]; then
+  puts_warn "No LANG variable found. Nothing to do."
+  exit 0
+fi
+
+language=`echo $LANG | cut -d'_' -f1`
+pack=`echo $LANG | cut -d'.' -f1`
+encoding=`echo $LANG | cut -d'.' -f2`
+
+case $encoding in
+  "")
+    encoding="UTF-8"
+    ;;
+  "utf8")
+    encoding="UTF-8"
+    ;;
+esac
+package=language-pack-$language-base
+
+if [[ $language = "en" ]]; then
+  puts_warn "Language is $language. Nothing to install."
+  exit 0
+fi
+
+puts_step "Updating or installing $package"
+
+mkdir -p $BUILD_DIR/.heroku/locales
+
+APT_CACHE_DIR="$CACHE_DIR/apt/cache"
+APT_STATE_DIR="$CACHE_DIR/apt/state"
+
+mkdir -p "$APT_CACHE_DIR/archives/partial"
+mkdir -p "$APT_STATE_DIR/lists/partial"
+
+APT_OPTIONS="-o debug::nolocking=true -o dir::cache=$APT_CACHE_DIR -o dir::state=$APT_STATE_DIR"
+
+apt-get $APT_OPTIONS update
+apt-get $APT_OPTIONS -y -d install --reinstall $package
+
+for DEB in $(ls -1 $APT_CACHE_DIR/archives/*.deb); do
+  dpkg -x $DEB $BUILD_DIR/.heroku/locales/
+done
+
+puts_step "Configuring locale with pack $pack and encoding $encoding"
+cat <<EOF >$BUILD_DIR/.profile.d/000_locale.sh
+export I18NPATH=/app/.heroku/locales/var/lib/locales/supported.d
+localedef -f $encoding -i $pack /app/.heroku/locales/usr/share/locale-langpack/$language/
+export LOCPATH=/app/.heroku/locales/usr/share/locale-langpack/
+EOF
