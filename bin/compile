@@ -25,6 +25,9 @@ case $encoding in
   "")
     encoding="UTF-8"
     ;;
+  $pack)
+    encoding="UTF-8"
+    ;;
   "utf8")
     encoding="UTF-8"
     ;;
