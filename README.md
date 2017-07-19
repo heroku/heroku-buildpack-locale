@@ -5,6 +5,10 @@ You may still want to use a custom language pack though.
 
 This buildpack will use the `$LANG` environment variable, install the appropriate language pack and configure it on your app.
 
+## Multiple Locales
+
+You can request the installation of multiple locales by creating a `.locales` file and setting every locale you need, one per line.
+
 ## Installation
 
 ```
