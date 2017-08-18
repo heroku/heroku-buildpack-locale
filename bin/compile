@@ -63,7 +63,7 @@ for lang in $langs; do
 
   if [[ $language = "en" ]]; then
     puts_warn "Language is $language. Nothing to install."
-    exit 0
+    continue
   fi
 
   puts_step "Updating or installing $package"
