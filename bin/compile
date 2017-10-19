@@ -60,11 +60,6 @@ for lang in $langs; do
   encoding=$(getEncoding $lang)
   package=language-pack-$language-base
 
-  if [[ $language = "en" ]]; then
-    puts_warn "Language is $language. Nothing to install."
-    continue
-  fi
-
   puts_step "Updating or installing $package"
   apt-get $APT_OPTIONS update
   apt-get $APT_OPTIONS -y -d install --reinstall $package
