@@ -37,19 +37,7 @@ getEncoding () {
   echo $encoding
 }
 
-if [ -n "$LANG" ]; then
-  puts_warn "Support for the '\$LANG' config variable to install locales will be removed soon."
-  puts_warn "You should switch to a '.locales' file."
-  puts_warn "See https://github.com/heroku/heroku-buildpack-locale"
-
-  test `tail -c 1 $BUILD_DIR/.locales` && echo -n "\n" >> $BUILD_DIR/.locales
-  if ! grep -q $LANG $BUILD_DIR/.locales; then
-    echo $LANG >> $BUILD_DIR/.locales
-  fi
-fi
 langs=`cat $BUILD_DIR/.locales`
-
-
 if [ ${#langs[@]} == 0 ]; then
   puts_warn "No lang values found. Nothing to do."
   exit 0
