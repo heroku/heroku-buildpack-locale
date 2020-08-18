@@ -6,7 +6,7 @@ You may still want to use a custom language pack though.
 ## Installation
 
 ```
-heroku buildpacks:add https://github.com/heroku/heroku-buildpack-locale
+heroku buildpacks:add heroku-community/locale
 ```
 
 ## Configuration
