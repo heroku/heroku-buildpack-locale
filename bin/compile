@@ -1,5 +1,5 @@
 #!/bin/bash -e
-source /dev/stdin <<< "$(curl -s --retry 3 https://lang-common.s3.amazonaws.com/buildpack-stdlib/latest/stdlib.sh)"
+source /dev/stdin <<< "$(curl -s --retry 3 https://lang-common.s3.amazonaws.com/buildpack-stdlib/v8/stdlib.sh)"
 
 BP_DIR=$(cd $(dirname $0)/..; pwd)
 BUILD_DIR=$1
